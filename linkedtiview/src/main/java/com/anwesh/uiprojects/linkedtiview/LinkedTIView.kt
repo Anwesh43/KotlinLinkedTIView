@@ -164,4 +164,27 @@ class LinkedTIView (ctx : Context) : View(ctx) {
             curr.startUpdating(startcb)
         }
     }
+
+    data class Renderer(var view : LinkedTIView) {
+
+        private val animator : Animator = Animator(view)
+
+        private val linkedIT : LinkedIT = LinkedIT(0)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(Color.parseColor("#212121"))
+            linkedIT.draw(canvas, paint)
+            animator.animate {
+                linkedIT.update {
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            linkedIT.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
