@@ -9,6 +9,8 @@ import android.view.MotionEvent
 import android.content.Context
 import android.graphics.*
 
+val IT_NODES : Int = 5
+
 class LinkedTIView (ctx : Context) : View(ctx) {
 
     private val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -76,6 +78,65 @@ class LinkedTIView (ctx : Context) : View(ctx) {
         fun stop() {
             if (animated) {
                 animated = false
+            }
+        }
+    }
+
+    data class ITNode (var i : Int) {
+
+        private val state : State = State()
+
+        private var next : ITNode? = null
+
+        private var prev : ITNode? = null
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            val w : Float = canvas.width.toFloat()
+            val h : Float = canvas.height.toFloat()
+            val gap : Float = w / IT_NODES
+            paint.strokeWidth = Math.min(w, h) / 60
+            paint.strokeCap = Paint.Cap.ROUND
+            paint.color = Color.WHITE
+            canvas.save()
+            canvas.translate(i * gap + gap * state.scales[0] - gap/3 , h / 2)
+            for (i in 0..1) {
+                canvas.save()
+                canvas.rotate(i * 180F * state.scales[1])
+                canvas.drawLine(0f, -gap/3, 0f, gap/3, paint)
+                canvas.drawLine(-gap/6, -gap/3, gap/6, -gap/3, paint)
+                canvas.restore()
+            }
+            canvas.restore()
+        }
+
+        fun update(stopcb : (Float) -> Unit) {
+            state.update(stopcb)
+        }
+
+        fun startUpdating(startcb : () -> Unit) {
+            state.startUpdating(startcb)
+        }
+
+        init {
+            addNeighbor()
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : ITNode {
+            var curr : ITNode? = prev
+            if (dir == 1) {
+                curr = next
+            }
+            if (curr != null) {
+                return curr
+            }
+            cb()
+            return this
+        }
+
+        fun addNeighbor() {
+            if (i < IT_NODES - 1) {
+                next = ITNode(i + 1)
+                next?.prev = this
             }
         }
     }
