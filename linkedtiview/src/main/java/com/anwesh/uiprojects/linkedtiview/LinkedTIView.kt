@@ -98,14 +98,18 @@ class LinkedTIView (ctx : Context) : View(ctx) {
             val w : Float = canvas.width.toFloat()
             val h : Float = canvas.height.toFloat()
             val gap : Float = w / IT_NODES
+            prev?.draw(canvas, paint)
             paint.strokeWidth = Math.min(w, h) / 60
             paint.strokeCap = Paint.Cap.ROUND
             paint.color = Color.WHITE
             canvas.save()
             canvas.translate(i * gap + gap * state.scales[0] - gap/3 , h / 2)
             for (i in 0..1) {
+                val index : Int = this.i%2
+                var deg : Float = 180f * (index)
+                val scale : Float = 180f * (1 - 2 * index) * state.scales[1]
                 canvas.save()
-                canvas.rotate(i * 180F * state.scales[1])
+                canvas.rotate((deg + scale) * i)
                 canvas.drawLine(0f, -gap/3, 0f, gap/3, paint)
                 canvas.drawLine(-gap/6, -gap/3, gap/6, -gap/3, paint)
                 canvas.restore()
