@@ -4,9 +4,11 @@ package com.anwesh.uiprojects.linkedtiview
  * Created by anweshmishra on 19/06/18.
  */
 
+import android.app.Activity
 import android.view.View
 import android.view.MotionEvent
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.graphics.*
 
 val IT_NODES : Int = 5
@@ -185,6 +187,14 @@ class LinkedTIView (ctx : Context) : View(ctx) {
             linkedIT.startUpdating {
                 animator.start()
             }
+        }
+    }
+
+    companion object {
+        fun create(activity : Activity) {
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE 
+            val view : LinkedTIView = LinkedTIView(activity)
+            activity.setContentView(view)
         }
     }
 }
